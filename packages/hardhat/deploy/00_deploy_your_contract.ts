@@ -22,25 +22,35 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const testingLog = await deploy("CreatorsToken", {
+  await deploy("NFTSales", {
     from: deployer,
     // Contract constructor arguments
-    args: ["Testing", "TS", "onahonah", 1000, deployer],
+    args: [],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+  const salesDeployment = await hre.ethers.getContract<Contract>("NFTSales", deployer);
+  console.log("👋 Initial greeting:", salesDeployment);
+
+  await deploy("CreatorsFactory", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [salesDeployment],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
 
-  console.log(testingLog, "/////////////////////////");
-
   // Get the deployed contract to interact with it after deploying.
-  const CreatorsToken = await hre.ethers.getContract<Contract>("CreatorsToken", deployer);
-  console.log("👋 Initial greeting:", await CreatorsToken.safeMint(deployer, "onahonah"));
+  const factoryDeployment = await hre.ethers.getContract<Contract>("CreatorsFactory", deployer);
+  console.log("👋 Initial greeting:", factoryDeployment);
 };
 
 export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["CreatorsToken"];
+deployYourContract.tags = ["CreatorsFactory"];

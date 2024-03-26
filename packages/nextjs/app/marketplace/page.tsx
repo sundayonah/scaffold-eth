@@ -1,10 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NftsData } from "./NFTToken";
+import CreatorsTokenAbi from "./creatorsToken.json";
+import { ethers } from "ethers";
 import { Address } from "~~/components/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 // import { EtherInput } from "~~/components/scaffold-eth";
 /*
@@ -12,6 +15,50 @@ import { Address } from "~~/components/scaffold-eth";
 #e9fbff
 */
 const Page = () => {
+  // const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
+  //   contractName: "CreatorsFactory",
+  //   functionName: "deployToken",
+  //   args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+  //   // value: ethers.utils.parseEther("0.1").toBigInt(),
+  //   blockConfirmations: 1,
+  //   onBlockConfirmation: txnReceipt => {
+  //     console.log("Transaction blockHash", txnReceipt.blockHash);
+  //   },
+  // });
+
+  const { data: AllTokens }: any = useScaffoldContractRead({
+    contractName: "CreatorsFactory",
+    functionName: "getAllTokens",
+    // args: [BigInt(0)]
+  });
+
+  console.log("Total counter:,", AllTokens);
+
+  // const { data: tokenDetails } = useScaffoldContractRead({
+  //   contractName: "CreatorsToken",
+  //   functionName: "name",
+  //   args: [AllTokens[0]],
+  // });
+
+  // console.log(tokenDetails, "tokenDetails");
+
+  useEffect(() => {
+    const tokenDetails = async () => {
+      // if (typeof window.ethereum !== "undefined") {
+      // const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      console.log("222222222");
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      const contractInstance = new ethers.Contract(AllTokens[0].toString(), CreatorsTokenAbi, provider);
+
+      console.log(contractInstance);
+
+      const getToken = await contractInstance.name();
+      console.log(getToken);
+    };
+    tokenDetails();
+  }, [AllTokens]);
+  console.log("1111111111");
+
   return (
     <div className="container mx-auto px-12 mt-16">
       <h1 className="text-center mb-3">Marketplace</h1>

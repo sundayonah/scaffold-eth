@@ -7,8 +7,16 @@ import pinataSDK from "@pinata/sdk";
 import axios from "axios";
 import { ethers } from "ethers";
 import { parseEther } from "ethers/lib/utils";
+import { useWalletClient } from "wagmi";
 import { InputBase } from "~~/components/scaffold-eth";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import {
+  useDeployedContractInfo,
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventHistory,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
+import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
 // import { EtherInput } from "~~/components/scaffold-eth";
 // import { AddressInput } from "~~/components/scaffold-eth";
@@ -39,24 +47,58 @@ const Page = () => {
     }
     console.log(e.target.files);
   };
-  const handleDivClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+  // const handleDivClick = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
+  /*
+    string calldata _name,
+		string calldata _symbol,
+		string calldata _initialTokenURI,
+		uint256 _totalSupply
+  */
+
+  // const { data: CreatorsFactory } = useScaffoldContract({
+  //   contractName: "CreatorsFactory",
+  // })
+
+  // const deploy = async () => {
+  //   await CreatorsFactory?.read.tokenCount();
+  // }
+
+  ///////////////////////////
 
   const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
-    contractName: "Factory",
+    contractName: "CreatorsFactory",
     functionName: "deployToken",
-    args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, formData.totalSupply],
-    value: ethers.utils.parseEther("0.1").toBigInt(),
+    args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+    // value: ethers.utils.parseEther("0.1").toBigInt(),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
-  // Append values from the state to the FormData object
+  // const { data: deployedContractData } = useDeployedContractInfo("CreatorsFactory");
+  // console.log(deployedContractData,'contract details')
+
+  const { data: tokenCount }: any = useScaffoldContractRead({
+    contractName: "CreatorsFactory",
+    functionName: "tokenCount",
+    // args: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
+  });
+
+  console.log(`Total counter: ${tokenCount}`);
+
+  const { data: AllTokens }: any = useScaffoldContractRead({
+    contractName: "CreatorsFactory",
+    functionName: "getAllTokens",
+    // args: [BigInt(0)]
+  });
+
+  console.log(`Total counter: ${AllTokens}`);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -82,6 +124,7 @@ const Page = () => {
       console.log(pinataResponse, "pinata response");
 
       const imageHash = pinataResponse.data.IpfsHash;
+      console.log(imageHash, "image");
       setIpfsImageHash(imageHash);
 
       console.log("File pinned successfully:", imageHash);
@@ -95,7 +138,12 @@ const Page = () => {
       console.log(formAssets, "form Assets");
 
       // Trigger the transaction using the writeAsync function
-      await writeAsync();
+      // await writeAsync();
+      await writeAsync({
+        args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+        // gasLimit: 600000, // Example gas limit
+        // gasPrice: ethers.utils.parseUnits("10.0", "gwei").toBigInt(), // Example gas price
+      });
 
       // if (typeof window.ethereum !== "undefined") {
       //   const provider = new ethers.providers.Web3Provider(window.ethereum as any);
@@ -195,11 +243,15 @@ const Page = () => {
             className="w-full text-center p-1 rounded-sm bg-primary mt-2"
             disabled={isLoading || isMining}
           >
-            Create
+            {isLoading ? "Loading..." : "Create"}
           </button>
         </form>
       </div>
-      <div></div>
+      <div>
+        <button className="btn btn-primary" onClick={() => writeAsync()}>
+          Send TX
+        </button>
+      </div>
     </div>
   );
 };
