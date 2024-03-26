@@ -2,47 +2,79 @@
 
 import Image from "next/image";
 // import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { NftsData } from "../NFTToken";
+import { useFetchTokenDetails } from "../NFTToken";
+import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { Address, Balance } from "~~/components/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   const { address: connectedAddress } = useAccount();
 
-  const tokenDetails = NftsData.find(token => token.id.toString() === params.tokenId);
+  const { data: AllTokens }: any = useScaffoldContractRead({
+    contractName: "CreatorsFactory",
+    functionName: "getAllTokens",
+    // args: [BigInt(0)]
+  });
+
+  const arrayOfTokens = useFetchTokenDetails(AllTokens);
+
+  const tokenDetails = arrayOfTokens.find(token => token.tokenURL.toString() === params.tokenId);
+  // console.log(tokenDetails, "arrayOfTokens");
+
+  const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
+    contractName: "NFTSales",
+    functionName: "buyNFT",
+    args: [tokenDetails?.tokenAddress],
+    value: ethers.parseEther("0.1"),
+    blockConfirmations: 1,
+    onBlockConfirmation: txnReceipt => {
+      console.log("Transaction blockHash", txnReceipt.blockHash);
+    },
+  });
 
   if (!tokenDetails) {
-    return <div>Loading...</div>;
+    return (
+      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+        <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto px-12 mt-16">
-      <div className="bg-base-300 p-6 rounded-lg max-w-md mx-auto mt-6">
-        <h2 className="text-lg font-bold mb-2">Your Ethereum Balance</h2>
-
-        <div className="text-sm font-semibold mb-2">
-          Address: <Address address={connectedAddress} />
-        </div>
-
-        <div className="text-sm font-semibold">
-          Balance: <Balance address={connectedAddress} />
-        </div>
-      </div>{" "}
-      <h2>{tokenDetails.name}</h2>
+      <h2 className="font-bold text-2xl">{tokenDetails.tokenName}</h2>
       <div>
         <Image
           className="w-full h-80 object-cover object-center rounded-md mx-auto"
-          src={tokenDetails.img}
-          alt={tokenDetails.name}
+          src={`https://ipfs.io/ipfs/${tokenDetails.tokenURL}`}
+          alt={tokenDetails.tokenName}
+          width={100}
+          height={50}
         />
-        <p>Total Supply: {tokenDetails.totalSupply}</p>
-        <div className="flex gap-3">
-          <p>Owner: </p>
-          <Address address={tokenDetails.owner} />
+
+        <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply}</p>
+        <div className="flex items-center text-sm font-semibold gap-5">
+          Owner: <Address address={tokenDetails.tokenOwner} />
         </div>
-        <div className="w-[50%] text-center p-1 rounded-sm bg-primary">
-          <button className="">Buy</button>
+        <div className="flex items-center text-sm font-semibold">
+          Balance: <Balance address={connectedAddress} />
         </div>
+
+        <button
+          onClick={() => writeAsync()}
+          type="submit"
+          className="w-full text-center p-1 rounded-sm bg-primary mt-2"
+          disabled={isLoading || isMining}
+        >
+          {isLoading ? (
+            <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+              <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
+            </div>
+          ) : (
+            "Buy NFT"
+          )}
+        </button>
       </div>
     </div>
   );

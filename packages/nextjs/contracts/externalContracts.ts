@@ -18,85 +18,83 @@ const externalContracts = {
       address: "0x9cA27Cf612a377236303FA0473E4E7C69d30fB8c",
       abi: [
         {
+          anonymous: false,
           inputs: [
             {
+              indexed: true,
               internalType: "address",
-              name: "_salesContract",
+              name: "buyer",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "nftAddress",
               type: "address",
             },
           ],
-          stateMutability: "nonpayable",
-          type: "constructor",
+          name: "BuyNFTEvent",
+          type: "event",
         },
         {
           anonymous: false,
           inputs: [
             {
-              indexed: false,
+              indexed: true,
               internalType: "address",
-              name: "tokenAddress",
+              name: "creator",
               type: "address",
             },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "nftAddress",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "tokensForSale",
+              type: "uint256",
+            },
           ],
-          name: "TokenDeployed",
+          name: "CreateSaleEvent",
           type: "event",
         },
         {
           inputs: [
             {
-              internalType: "string",
-              name: "_name",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_symbol",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_initialTokenURI",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "_totalSupply",
-              type: "uint256",
-            },
-          ],
-          name: "deployToken",
-          outputs: [
-            {
               internalType: "address",
-              name: "",
+              name: "_nftAddress",
               type: "address",
             },
           ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getAllTokens",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
+          name: "buyNFT",
+          outputs: [],
+          stateMutability: "payable",
           type: "function",
         },
         {
           inputs: [
             {
               internalType: "address",
-              name: "",
+              name: "_nftAddress",
               type: "address",
             },
+            {
+              internalType: "uint256",
+              name: "_pricePerToken",
+              type: "uint256",
+            },
           ],
-          name: "isToken",
+          name: "createSale",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "deploy",
           outputs: [
             {
               internalType: "bool",
@@ -104,12 +102,12 @@ const externalContracts = {
               type: "bool",
             },
           ],
-          stateMutability: "view",
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [],
-          name: "salesContract",
+          name: "factory",
           outputs: [
             {
               internalType: "address",
@@ -123,49 +121,27 @@ const externalContracts = {
         {
           inputs: [
             {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "tokenAdresses",
-          outputs: [
-            {
               internalType: "address",
               name: "",
               type: "address",
             },
           ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "tokenCount",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "tokens",
+          name: "nftSales",
           outputs: [
             {
               internalType: "address",
-              name: "",
+              name: "nftAddress",
               type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "pricePerToken",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "amountSold",
+              type: "uint256",
             },
           ],
           stateMutability: "view",

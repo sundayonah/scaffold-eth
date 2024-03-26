@@ -1,19 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { NftsData } from "./NFTToken";
-import CreatorsTokenAbi from "./creatorsToken.json";
-import { ethers } from "ethers";
+import { useFetchTokenDetails } from "./NFTToken";
 import { Address } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
-// import { EtherInput } from "~~/components/scaffold-eth";
-/*
-#c8f5ff
-#e9fbff
-*/
 const Page = () => {
   // const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
   //   contractName: "CreatorsFactory",
@@ -32,7 +25,11 @@ const Page = () => {
     // args: [BigInt(0)]
   });
 
-  console.log("Total counter:,", AllTokens);
+  const arrayOfTokens = useFetchTokenDetails(AllTokens);
+
+  // console.log(arrayOfTokens);
+
+  // console.log("Total counter:,", AllTokens);
 
   // const { data: tokenDetails } = useScaffoldContractRead({
   //   contractName: "CreatorsToken",
@@ -42,52 +39,106 @@ const Page = () => {
 
   // console.log(tokenDetails, "tokenDetails");
 
-  useEffect(() => {
-    const tokenDetails = async () => {
-      // if (typeof window.ethereum !== "undefined") {
-      // const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      console.log("222222222");
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
-      const contractInstance = new ethers.Contract(AllTokens[0].toString(), CreatorsTokenAbi, provider);
+  // useEffect(() => {
+  //   const tokenDetails = async () => {
+  //     const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+  //     console.log("eyeyeyeyeyeyeyeyyeyeyey");
+  //     const tokenPromises = AllTokens.map(async (tokenAddress: string) => {
+  //       const contractInstance = new ethers.Contract(tokenAddress, CreatorsTokenAbi, provider);
+  //       const tokenName = await contractInstance.name();
+  //       const tokenSymbol = await contractInstance.symbol();
+  //       const tokenOwner = await contractInstance.owner();
+  //       // const tokensupply = await contractInstance.totalSupply();
+  //       const tokenURL = await contractInstance.baseURI();
+  //       console.log(tokenName, "token name");
+  //       console.log(tokenSymbol);
+  //       console.log(tokenOwner);
+  //       console.log(tokenURL);
+  //       console.log({ tokenName, tokenSymbol, tokenOwner, tokenURL }, "TOKEN DETAILS");
+  //       const tokenMetaData = { tokenName, tokenSymbol, tokenURL };
+  //       setTokenMetaData(tokenMetaData);
+  //       console.log(tokenMetaData);
 
-      console.log(contractInstance);
+  //       return { tokenName, tokenSymbol, tokenURL };
+  //     });
+  //     const tokenDetails = await Promise.all(tokenPromises);
+  //     console.log(tokenDetails);
+  //   };
+  //   tokenDetails();
+  // }, [AllTokens]);
+  // console.log("1111111111");
 
-      const getToken = await contractInstance.name();
-      console.log(getToken);
-    };
-    tokenDetails();
-  }, [AllTokens]);
-  console.log("1111111111");
+  // useEffect(() => {
+  //   const tokenDetails = async () => {
+  //     const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+  //     console.log("Fetching token details...");
+
+  //     // Map over AllTokens to fetch details for each token
+  //     const tokenPromises = AllTokens?.map(async (tokenAddress: string) => {
+  //       const contractInstance = new ethers.Contract(tokenAddress, CreatorsTokenAbi, provider);
+
+  //       // console.log(contractInstance, "contractInstance");
+  //       const tokenName = await contractInstance.name();
+  //       const tokenSymbol = await contractInstance.symbol();
+  //       const tokenOwner = await contractInstance.owner();
+  //       const tokenURL = await contractInstance.baseURI();
+  //       // console.log({ tokenOwner }, "TOKEN DETAILS");
+
+  //       // Return an object for each token detail
+  //       return { tokenName, tokenOwner, tokenSymbol, tokenURL };
+  //     });
+
+  //     // Wait for all promises to resolve
+  //     const allTokenDetails = await Promise.all(tokenPromises);
+  //     // console.log(allTokenDetails);
+
+  //     // Set the accumulated token details to the state
+  //     setTokenMetaData(allTokenDetails);
+  //   };
+
+  //   tokenDetails();
+  // }, [AllTokens]);
+
+  // console.log(AllTokens.length, "AllTokens");
+
+  if (!AllTokens) {
+    return (
+      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+        <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-12 mt-16">
-      <h1 className="text-center mb-3">Marketplace</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {NftsData.map((token, index) => (
+    <div className="container mx-auto px-12 mt-24">
+      <h1 className="text-center mb-3 font-bold text-2xl">Marketplace</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+        {arrayOfTokens.map((token, index) => (
           <div
-            key={token.id}
+            key={token.tokenName}
             className="bg-[#e9fbff] shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
           >
-            <Link href={`/marketplace/${token.id}`} passHref>
+            <Link href={`/marketplace/${token.tokenURL}`} passHref>
               <Image
                 className="w-full h-32 object-cover object-center rounded-md mx-auto"
-                src={token.img}
-                alt={token.name}
+                src={`https://ipfs.io/ipfs/${token.tokenURL}`}
+                alt={token.tokenName}
+                width={100}
+                height={50}
               />
               <div className="absolute bottom-32 left-2 text-gray-200 bg-white bg-opacity-50 p-2 rounded-bl-md shadow-xl">
-                #{index + 1}
+                <span className="text-gray-500">#{index + 1}</span>
               </div>
               <div className="p-2">
-                <h2 className="text-start text-lg font-bold mt-1">{token.name}</h2>
+                <h2 className="text-start text-lg font-bold mt-1">{token.tokenName}</h2>
                 <p className="text-start text-gray-600">Total Supply: {token.totalSupply}</p>
-                {/* <EtherInput value={token.} onChange={amount => setEthAmount(amount)} />; */}
 
                 <div className="flex gap-3">
                   <p className="text-sm">Owner: </p>
-                  <Address address={token.owner} />
+                  <Address address={token.tokenOwner} />
                 </div>
               </div>
-            </Link>
+            </Link>{" "}
           </div>
         ))}
       </div>

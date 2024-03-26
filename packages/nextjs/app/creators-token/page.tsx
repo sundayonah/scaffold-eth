@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import CreatorsNFTs from "../CreatorsNFTs/page";
 import CreatorsAbi from "./creatorsToken.json";
 import FactoryAbi from "./factory.json";
 import pinataSDK from "@pinata/sdk";
@@ -89,7 +90,7 @@ const Page = () => {
     // args: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
   });
 
-  console.log(`Total counter: ${tokenCount}`);
+  // console.log(`Total counter: ${tokenCount}`);
 
   const { data: AllTokens }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
@@ -144,47 +145,10 @@ const Page = () => {
         // gasLimit: 600000, // Example gas limit
         // gasPrice: ethers.utils.parseUnits("10.0", "gwei").toBigInt(), // Example gas price
       });
-
-      // if (typeof window.ethereum !== "undefined") {
-      //   const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      //   const signer = provider.getSigner();
-      //   const contractInstance = new ethers.Contract(factoryContractAddress, FactoryAbi.abi, signer);
-
-      //   const createToken = await contractInstance.deployToken(
-      //     formData.tokenName,
-      //     formData.tokenSymbol,
-      //     imageHash,
-      //     formData.totalSupply,
-      //     {
-      //       gasLimit: 600000,
-      //       gasPrice: ethers.utils.parseUnits("10.0", "gwei"),
-      //     },
-      //   );
-      //   // Wait for the transaction to be mined
-      //   const receipt = await createToken.wait();
-      //   console.log("Token deployed successfully:", receipt);
-      // } else {
-      //   console.error("Ethereum provider not found. Please ensure you are using a browser with Ethereum support.");
-      // }
-      //////////////////////////\/\/////////////////////////////////\/\
     } catch (error: any) {
       console.error("Error pinning file to IPFS:", error);
     }
   };
-
-  // useEffect(() => {
-  //   const TokensCount = async () => {
-  //     // if (typeof window.ethereum !== "undefined") {
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-  //     const contractInstance = new ethers.Contract(factoryContractAddress, FactoryAbi.abi, provider);
-  //     const tokenCount = await contractInstance.tokenCount();
-  //     const tokens = await contractInstance.tokens(0);
-  //     console.log(tokenCount.toString(), "tokenCount");
-  //     console.log(tokens);
-  //   };
-  //   // };
-  //   TokensCount();
-  // }, []);
 
   return (
     <div className=" flex items-center flex-col flex-grow pt-10 mt-10">
@@ -243,119 +207,18 @@ const Page = () => {
             className="w-full text-center p-1 rounded-sm bg-primary mt-2"
             disabled={isLoading || isMining}
           >
-            {isLoading ? "Loading..." : "Create"}
+            {isLoading ? (
+              <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+                <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
+              </div>
+            ) : (
+              "Create Token"
+            )}
           </button>
         </form>
-      </div>
-      <div>
-        <button className="btn btn-primary" onClick={() => writeAsync()}>
-          Send TX
-        </button>
       </div>
     </div>
   );
 };
 
 export default Page;
-
-/*
-
-Deploying CreatorsToken contract with the deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-//////////////CREATORS TOKE/////////////////////
-deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
-////////////////FACTORY///////////////////
-deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
-
-const ethers = require('ethers');
-const axios = require('axios');
-
-// Function to upload image to IPFS and interact with smart contract
-async function uploadImageAndInteractWithContract(file, tokenName, tokenSymbol, totalSupply, tokenAddress) {
- // Step 1: Upload image to IPFS using Pinata
- const pinataApiKey = 'YOUR_PINATA_API_KEY';
- const pinataSecretApiKey = 'YOUR_PINATA_SECRET_API_KEY';
- const pinataUrl = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
-
- const formData = new FormData();
- formData.append('file', file);
-
- const pinataResponse = await axios.post(pinataUrl, formData, {
-    maxContentLength: Infinity, // This is needed to prevent axios from erroring out with large files
-    headers: {
-      'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-      pinata_api_key: pinataApiKey,
-      pinata_secret_api_key: pinataSecretApiKey,
-    },
- });
-
- const ipfsHash = pinataResponse.data.IpfsHash;
-
- // Step 2: Interact with smart contract
- const provider = new ethers.providers.JsonRpcProvider('YOUR_RPC_PROVIDER_URL');
- const signer = provider.getSigner();
- const contractAddress = 'YOUR_CONTRACT_ADDRESS';
- const contractABI = [
-    // Your contract ABI here
- ];
-
- const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
- // Assuming your smart contract has a function named `createToken` that accepts the IPFS hash and other details
- const tx = await contract.createToken(ipfsHash, tokenName, tokenSymbol, totalSupply, tokenAddress);
- await tx.wait(); // Wait for the transaction to be mined
-
- console.log('Transaction successful');
-}
-
-// Example usage
-// uploadImageAndInteractWithContract(file, "TokenName", "TKN", 1000, "0xYourTokenAddress");
-
-
-*/
-/*
-const ethers = require('ethers');
-const axios = require('axios');
-
-// Function to upload image to IPFS and interact with smart contract
-async function uploadImageAndInteractWithContract(file, tokenName, tokenSymbol, totalSupply, tokenAddress) {
- // Step 1: Upload image to IPFS using Pinata
- const pinataApiKey = 'cdc215686c5dacab48be';
- const pinataSecretApiKey = '54622cbeb84d4a1d9052aee5e49e2d3d9b6589470d0c26b6050e1af1cc138d10';
- const pinataUrl = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
-
- const formData = new FormData();
- formData.append('file', file);
-
- const pinataResponse = await axios.post(pinataUrl, formData, {
-    maxContentLength: Infinity,
-    headers: {
-      'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-      pinata_api_key: pinataApiKey,
-      pinata_secret_api_key: pinataSecretApiKey,
-    },
- });
-
- const ipfsHash = pinataResponse.data.IpfsHash;
-
- // Step 2: Prepare the token URI with the IPFS hash
- const tokenURI = `https://ipfs.io/ipfs/${ipfsHash}`;
-
- // Step 3: Interact with smart contract
- const provider = new ethers.providers.JsonRpcProvider('YOUR_RPC_PROVIDER_URL');
- const signer = provider.getSigner();
- const contractAddress = '0x5e17b14ADd6c386305A32928F985b29bbA34Eff5';
-
-
- const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
- // Call the mintNFT function with the tokenURI including the IPFS hash
- const tx = await contract.mintNFT(tokenAddress, tokenURI);
- await tx.wait(); // Wait for the transaction to be mined
-
- console.log('Transaction successful');
-}
-
-// Example usage
-// uploadImageAndInteractWithContract(file, "TokenName", "TKN", 1000, "0xYourTokenAddress");
-
-*/

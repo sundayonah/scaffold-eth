@@ -1,21 +1,54 @@
-import img1 from "../images/img1.webp";
-import img2 from "../images/img2.webp";
-import img3 from "../images/img3.webp";
-import img4 from "../images/img4.jpg";
+import { useEffect, useState } from "react";
+import CreatorsTokenAbi from "./creatorsToken.json";
+import { ethers } from "ethers";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
-export const NftsData: { id: number; name: string; img: string | any; totalSupply: number; owner: string }[] = [
-  { id: 1, name: "Musician", img: img1, totalSupply: 1000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 2, name: "Footballer", img: img2, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 3, name: "Designer", img: img3, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 4, name: "Artist", img: img4, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 5, name: "Litography", img: img4, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 6, name: "Musician", img: img3, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  { id: 7, name: "Baker", img: img2, totalSupply: 2000, owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3" },
-  {
-    id: 8,
-    name: "Mountain Climber",
-    img: img1,
-    totalSupply: 2000,
-    owner: "0x1BB8Dd168a0A6B0d51e0343163aF38Baa330F7c3",
-  },
-];
+// Adjust the import path as necessary
+interface TokenDetail {
+  tokenName: string;
+  tokenSymbol: string;
+  tokenURL: string;
+  tokenOwner: string;
+  tokenAddress: string;
+}
+
+// Custom hook to fetch token details
+export const useFetchTokenDetails = (AllTokens: any) => {
+  const [tokenMetaData, setTokenMetaData] = useState<TokenDetail[]>([]);
+
+  //////////////////////////////////////////
+  const { data: getAllTokens }: any = useScaffoldContractRead({
+    contractName: "CreatorsFactory",
+    functionName: "getAllTokens",
+    // args: [BigInt(0)]
+  });
+
+  console.log(`Total counter: ${getAllTokens}`);
+
+  useEffect(() => {
+    const fetchTokenDetails = async () => {
+      const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      // console.log("Fetching token details...");
+
+      const tokenPromises = AllTokens?.map(async (tokenAddress: string) => {
+        const contractInstance = new ethers.Contract(tokenAddress, CreatorsTokenAbi, provider);
+        const tokenName = await contractInstance.name();
+        const tokenSymbol = await contractInstance.symbol();
+        const tokenOwner = await contractInstance.owner();
+        const tokenURL = await contractInstance.baseURI();
+
+        return { tokenName, tokenOwner, tokenSymbol, tokenURL, tokenAddress };
+      });
+
+      const allTokenDetails = await Promise.all(tokenPromises);
+      // console.log(allTokenDetails, "allTokenDetails");
+      setTokenMetaData(allTokenDetails);
+    };
+
+    if (AllTokens) {
+      fetchTokenDetails();
+    }
+  }, [AllTokens]);
+
+  return tokenMetaData;
+};
