@@ -15,8 +15,35 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const externalContracts = {
   80001: {
     NFTSales: {
-      address: "0x9cA27Cf612a377236303FA0473E4E7C69d30fB8c",
+      address: "0x2Af315ec9B9F1b493650103b98d699B01e4fa636",
       abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
         {
           anonymous: false,
           inputs: [
@@ -59,6 +86,25 @@ const externalContracts = {
             },
           ],
           name: "CreateSaleEvent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
           type: "event",
         },
         {
@@ -147,35 +193,9 @@ const externalContracts = {
           stateMutability: "view",
           type: "function",
         },
-      ],
-    },
-    CreatorsFactory: {
-      address: "0xD23a14791d6DC78b18C5fc3964551365c1351499",
-      abi: [
         {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_name",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_symbol",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_initialTokenURI",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "_totalSupply",
-              type: "uint256",
-            },
-          ],
-          name: "deployToken",
+          inputs: [],
+          name: "owner",
           outputs: [
             {
               internalType: "address",
@@ -183,9 +203,47 @@ const externalContracts = {
               type: "address",
             },
           ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_factory",
+              type: "address",
+            },
+          ],
+          name: "setFactory",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+    },
+    CreatorsFactory: {
+      address: "0x9D035f097DAAF5dB829305eB51ec33Bedb9beC37",
+      abi: [
         {
           inputs: [
             {
@@ -209,6 +267,35 @@ const externalContracts = {
           ],
           name: "TokenDeployed",
           type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_symbol",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_initialTokenURI",
+              type: "string",
+            },
+          ],
+          name: "deployToken",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
         },
         {
           inputs: [],

@@ -27,55 +27,28 @@ const Page = () => {
     // args: [BigInt(0)]
   });
 
-  //   console.log(object);
-
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
-  // console.log(arrayOfTokens);
+  console.log(arrayOfTokens, "arrayOfTokens");
 
   const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
-  // console.log(tokenAddresses);
-
-  // Assuming you want to check if each token is on sale
-
-  // const { data: nfts }: any = useScaffoldContractRead({
-  //   contractName: "NFTSales",
-  //   functionName: "nftSales",
-  //   args: ["0x3BaeB6C865135c1d613c659f84f8b4345487141D"],
-  // });
-
-  // console.log(nfts);
-
-  // const {
-  //   data: events,
-  //   isLoading: isLoadingEvents,
-  //   error: errorReadingEvents,
-  // } = useScaffoldEventHistory({
-  //   contractName: "NFTSales",
-  //   eventName: "nftSales",
-  //   fromBlock: 31231n,
-  //   watch: true,
-  //   filters: { premium: true },
-  //   blockData: true,
-  //   transactionData: true,
-  //   receiptData: true,
-  // });
-
-  // console.log(events, "events");
 
   useEffect(() => {
     const fetchSaleStatuses = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
-      const contractInstance = new ethers.Contract("0x9cA27Cf612a377236303FA0473E4E7C69d30fB8c", NFTSalesAbi, provider);
+      const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      const contractInstance = new ethers.Contract("0x2Af315ec9B9F1b493650103b98d699B01e4fa636", NFTSalesAbi, provider);
 
       const statuses: Record<string, boolean> = {};
       for (const address of tokenAddresses) {
         const ad = "0x3BaeB6C865135c1d613c659f84f8b4345487141D";
-        console.log("chchchchchchchchchchchch: ")
         const isOnSale = await contractInstance.nftSales(address);
-        if (isOnSale.nftAddress == 0x)
+        if (isOnSale.nftAddress == ethers.ZeroAddress) {
+          statuses[address] = false;
+        } else {
+          statuses[address] = true;
+        }
 
         // console.log(isOnSale.toString());
-        statuses[address] = isOnSale;
+        // statuses[address] = isOnSale;
       }
       // Use the functional update form of setSaleStatuses to ensure you're working with the most up-to-date state
       setSaleStatuses(prevStatuses => ({
@@ -224,14 +197,14 @@ const Page = () => {
 
                 <div className="flex gap-3">
                   <p className="text-sm">Owner: </p>
-                  <Address address={token.tokenOwner} />
+                  <Address address={token.tokenAddress} />
                 </div>
               </div>
               {!saleStatuses[token.tokenAddress] && (
                 <IntegerInput
                   value={txValue}
                   onChange={updatedTxValue => {
-                    setTxValue(updatedTxValue);
+                    setTxValue(updatedTxValue); //ethers.formatEther(updatedTxValue.toString()));
                   }}
                   placeholder="input token price"
                 />

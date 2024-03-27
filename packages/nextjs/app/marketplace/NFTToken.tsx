@@ -10,6 +10,7 @@ interface TokenDetail {
   tokenURL: string;
   tokenOwner: string;
   tokenAddress: string;
+  totalSupply: string;
 }
 
 // Custom hook to fetch token details
@@ -27,7 +28,7 @@ export const useFetchTokenDetails = (AllTokens: any) => {
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
       // console.log("Fetching token details...");
 
       const tokenPromises = AllTokens?.map(async (tokenAddress: string) => {
@@ -36,12 +37,13 @@ export const useFetchTokenDetails = (AllTokens: any) => {
         const tokenSymbol = await contractInstance.symbol();
         const tokenOwner = await contractInstance.owner();
         const tokenURL = await contractInstance.baseURI();
+        const totalSupply = await contractInstance.totalSupply();
 
-        return { tokenName, tokenOwner, tokenSymbol, tokenURL, tokenAddress };
+        return { tokenName, tokenOwner, tokenSymbol, tokenURL, tokenAddress, totalSupply };
       });
 
       const allTokenDetails = await Promise.all(tokenPromises);
-      // console.log(allTokenDetails, "allTokenDetails");
+      console.log(allTokenDetails, "allTokenDetails");
       setTokenMetaData(allTokenDetails);
     };
 

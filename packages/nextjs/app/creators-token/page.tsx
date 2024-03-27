@@ -39,7 +39,6 @@ const Page = () => {
   const [formData, setFormData] = useState({
     tokenName: "",
     tokenSymbol: "",
-    totalSupply: "",
   });
 
   const handleImagePinToIPFS = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +51,7 @@ const Page = () => {
   const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
     contractName: "CreatorsFactory",
     functionName: "deployToken",
-    args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+    args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash],
     // value: ethers.utils.parseEther("0.1").toBigInt(),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
@@ -109,13 +108,12 @@ const Page = () => {
 
       formAssets.append("tokenName", formData.tokenName);
       formAssets.append("tokenSymbol", formData.tokenSymbol);
-      formAssets.append("totalSupply", formData.totalSupply);
       console.log(formAssets, "form Assets");
 
       // Trigger the transaction using the writeAsync function
       // await writeAsync();
       await writeAsync({
-        args: [formData.tokenName, formData.tokenSymbol, imageHash, BigInt(formData.totalSupply)],
+        args: [formData.tokenName, formData.tokenSymbol, imageHash],
         // gasLimit: 600000, // Example gas limit
         // gasPrice: ethers.utils.parseUnits("10.0", "gwei").toBigInt(), // Example gas price
       });
@@ -124,7 +122,6 @@ const Page = () => {
       setFormData({
         tokenName: "",
         tokenSymbol: "",
-        totalSupply: "",
       });
 
       //reset the file input stat
@@ -156,16 +153,6 @@ const Page = () => {
               placeholder="symbol"
               value={formData.tokenSymbol}
               onChange={symbol => setFormData(prevState => ({ ...prevState, tokenSymbol: symbol }))}
-            />
-          </div>
-          <div>
-            <label className="text-sm">Asset Total Supply</label>
-
-            <InputBase
-              name="totalSupply"
-              placeholder="totalSupply"
-              value={formData.totalSupply}
-              onChange={totalSupply => setFormData(prevState => ({ ...prevState, totalSupply: totalSupply }))}
             />
           </div>
           <div>

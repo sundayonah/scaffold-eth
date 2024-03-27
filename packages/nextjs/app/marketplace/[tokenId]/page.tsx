@@ -28,7 +28,7 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
     contractName: "NFTSales",
     functionName: "buyNFT",
     args: [tokenDetails?.tokenAddress],
-    value: ethers.utils.parseEther("0.0001").toBigInt(),
+    value: ethers.parseEther("0.0001"),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
@@ -70,9 +70,12 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
           height={50}
         />
 
-        <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply}</p>
+        <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply.toString()}</p>
         <div className="flex items-center text-sm font-semibold gap-5">
           Owner: <Address address={tokenDetails.tokenOwner} />
+        </div>
+        <div className="flex items-center text-sm font-semibold gap-5">
+          Asset: <Address address={tokenDetails.tokenAddress} />
         </div>
         <div className="flex items-center text-sm font-semibold">
           Balance: <Balance address={connectedAddress} />

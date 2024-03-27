@@ -11,7 +11,7 @@ const Page = () => {
   // const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
   //   contractName: "CreatorsFactory",
   //   functionName: "deployToken",
-  //   args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+  //   args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply.toString())],
   //   // value: ethers.utils.parseEther("0.1").toBigInt(),
   //   blockConfirmations: 1,
   //   onBlockConfirmation: txnReceipt => {
@@ -48,7 +48,7 @@ const Page = () => {
   //       const tokenName = await contractInstance.name();
   //       const tokenSymbol = await contractInstance.symbol();
   //       const tokenOwner = await contractInstance.owner();
-  //       // const tokensupply = await contractInstance.totalSupply();
+  //       // const tokensupply = await contractInstance.totalSupply.toString()();
   //       const tokenURL = await contractInstance.baseURI();
   //       console.log(tokenName, "token name");
   //       console.log(tokenSymbol);
@@ -131,11 +131,15 @@ const Page = () => {
               </div>
               <div className="p-2">
                 <h2 className="text-start text-lg font-bold mt-1">{token.tokenName}</h2>
-                <p className="text-start text-gray-600">Total Supply: {token.totalSupply}</p>
+                <p className="text-start text-gray-600">Total Supply: {token.totalSupply.toString()}</p>
 
                 <div className="flex gap-3">
                   <p className="text-sm">Owner: </p>
                   <Address address={token.tokenOwner} />
+                </div>
+                <div className="flex gap-3">
+                  <p className="text-sm">Asset: </p>
+                  <Address address={token.tokenAddress} />
                 </div>
               </div>
             </Link>{" "}
