@@ -69,14 +69,15 @@ const Page = () => {
   if (tokenDetails?.length == 0) {
     return (
       <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
-        <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
+        <h1 className="text-center mb-3 font-bold text-2xl">This User has No Profile</h1>
+        {/* <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div> */}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-12 mt-24">
-      <h1 className="text-center mb-3 font-bold text-2xl">User Assets</h1>
+    <div className="container mx-auto px-12 mt-32">
+      {/* <h1 className="text-center mb-3 font-bold text-2xl">User Assets</h1> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {tokenMetaData.map((token, index) => (
           <div

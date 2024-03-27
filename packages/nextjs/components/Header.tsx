@@ -20,7 +20,7 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/",
   },
   {
-    label: "Digital Assets",
+    label: "My Profile",
     href: "/digital-assets",
   },
   {

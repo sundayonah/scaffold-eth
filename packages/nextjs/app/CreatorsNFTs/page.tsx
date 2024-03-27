@@ -118,7 +118,7 @@ const Page = () => {
 
   if (userTokens.length == 0) {
     return (
-      <div className="max-w-5xl mx-auto my-auto flex flex-col justify-center items-center mt-24">
+      <div className="max-w-5xl mx-auto my-auto flex flex-col justify-center items-center mt-32">
         <h1 className="text-center mb-3 font-bold text-2xl">This User has No token</h1>
         <div className="flex justify-end mb-6">
           <Link href="/creators-token" passHref className=" text-center p-1.5 rounded-md bg-primary mt-2">
@@ -182,7 +182,7 @@ const Page = () => {
                 className="w-full text-center p-1 rounded-sm bg-primary mt-2"
                 disabled={isLoading || isMining}
               >
-                {isLoading && saleStatuses[token.tokenAddress] ? (
+                {isLoading && !saleStatuses[token.tokenAddress] && inputValues[token.tokenAddress] ? (
                   <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
                     <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
                   </div>

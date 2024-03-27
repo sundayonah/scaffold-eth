@@ -111,7 +111,7 @@ const Page = () => {
 
   return (
     <div className="container mx-auto px-12 mt-24">
-      <h1 className="text-center mb-3 font-bold text-2xl">Marketplace</h1>
+      {/* <h1 className="text-center mb-3 font-bold text-2xl">Marketplace</h1> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {arrayOfTokens.map((token, index) => (
           <div
