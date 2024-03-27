@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 // import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFetchTokenDetails } from "../NFTToken";
@@ -10,6 +11,7 @@ import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaf
 
 const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   const { address: connectedAddress } = useAccount();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { data: AllTokens }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
@@ -26,12 +28,27 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
     contractName: "NFTSales",
     functionName: "buyNFT",
     args: [tokenDetails?.tokenAddress],
-    value: ethers.parseEther("0.1"),
+    value: ethers.utils.parseEther("0.0001").toBigInt(),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
     },
   });
+
+  const handleBuyNFT = async () => {
+    try {
+      await writeAsync();
+    } catch (error: any) {
+      if (error.message.includes("NFT sale does not exist")) {
+        setErrorMessage("NFT sale does not exist. Please check the NFT address.");
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 5000);
+      } else {
+        setErrorMessage("An error occurred while buying the NFT.");
+      }
+    }
+  };
 
   if (!tokenDetails) {
     return (
@@ -62,7 +79,11 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
         </div>
 
         <button
-          onClick={() => writeAsync()}
+          onClick={() => {
+            console.log("Yoou have clicked me", tokenDetails.tokenName);
+            // writeAsync();
+            handleBuyNFT();
+          }}
           type="submit"
           className="w-full text-center p-1 rounded-sm bg-primary mt-2"
           disabled={isLoading || isMining}
@@ -75,6 +96,7 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
             "Buy NFT"
           )}
         </button>
+        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
       </div>
     </div>
   );

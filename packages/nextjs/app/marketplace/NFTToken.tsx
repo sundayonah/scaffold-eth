@@ -23,11 +23,11 @@ export const useFetchTokenDetails = (AllTokens: any) => {
     // args: [BigInt(0)]
   });
 
-  console.log(`Total counter: ${getAllTokens}`);
+  // console.log(`Total counter: ${getAllTokens}`);
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
-      const provider = new ethers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
       // console.log("Fetching token details...");
 
       const tokenPromises = AllTokens?.map(async (tokenAddress: string) => {

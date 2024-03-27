@@ -48,27 +48,6 @@ const Page = () => {
     }
     console.log(e.target.files);
   };
-  // const handleDivClick = () => {
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.click();
-  //   }
-  // };
-  /*
-    string calldata _name,
-		string calldata _symbol,
-		string calldata _initialTokenURI,
-		uint256 _totalSupply
-  */
-
-  // const { data: CreatorsFactory } = useScaffoldContract({
-  //   contractName: "CreatorsFactory",
-  // })
-
-  // const deploy = async () => {
-  //   await CreatorsFactory?.read.tokenCount();
-  // }
-
-  ///////////////////////////
 
   const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
     contractName: "CreatorsFactory",
@@ -81,16 +60,11 @@ const Page = () => {
     },
   });
 
-  // const { data: deployedContractData } = useDeployedContractInfo("CreatorsFactory");
-  // console.log(deployedContractData,'contract details')
-
   const { data: tokenCount }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
     functionName: "tokenCount",
     // args: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
   });
-
-  // console.log(`Total counter: ${tokenCount}`);
 
   const { data: AllTokens }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
@@ -98,7 +72,7 @@ const Page = () => {
     // args: [BigInt(0)]
   });
 
-  console.log(`Total counter: ${AllTokens}`);
+  // console.log(`Total counter: ${AllTokens}`);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -141,10 +115,20 @@ const Page = () => {
       // Trigger the transaction using the writeAsync function
       // await writeAsync();
       await writeAsync({
-        args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash, BigInt(formData.totalSupply)],
+        args: [formData.tokenName, formData.tokenSymbol, imageHash, BigInt(formData.totalSupply)],
         // gasLimit: 600000, // Example gas limit
         // gasPrice: ethers.utils.parseUnits("10.0", "gwei").toBigInt(), // Example gas price
       });
+
+      // After successful submission, reset the form fields
+      setFormData({
+        tokenName: "",
+        tokenSymbol: "",
+        totalSupply: "",
+      });
+
+      //reset the file input stat
+      setFileImg(null);
     } catch (error: any) {
       console.error("Error pinning file to IPFS:", error);
     }

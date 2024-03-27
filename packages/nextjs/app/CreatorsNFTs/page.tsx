@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import img1 from "../images/img1.webp";
 import { useFetchTokenDetails } from "../marketplace/NFTToken";
+import NFTSalesAbi from "./creatorsNFTs.json";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 // import { useFetchTokenDetails } from "./NFTToken";
 import { Address } from "~~/components/scaffold-eth";
 import { IntegerInput } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 const Page = () => {
   const { address } = useAccount();
   const [txValue, setTxValue] = useState<string | bigint>("");
+  const [loadingStatuses, setLoadingStatuses] = useState<Record<string, boolean>>({});
+
+  // const statuses: Record<string, boolean> = {};
+  const [saleStatuses, setSaleStatuses] = useState<Record<string, boolean>>({});
 
   const { data: AllTokens }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
@@ -25,17 +30,129 @@ const Page = () => {
   //   console.log(object);
 
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
-  //   console.log(arrayOfTokens);
+  // console.log(arrayOfTokens);
 
-  const tokenAddresses: string[] = arrayOfTokens.map(nft => nft.tokenAddress);
-  console.log(tokenAddresses);
+  const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
+  // console.log(tokenAddresses);
 
-  const { data: nfts }: any = useScaffoldContractRead({
-    contractName: "NFTSales",
-    functionName: "nftSales",
-    args: [""],
-  });
-  console.log(nfts);
+  // Assuming you want to check if each token is on sale
+
+  // const { data: nfts }: any = useScaffoldContractRead({
+  //   contractName: "NFTSales",
+  //   functionName: "nftSales",
+  //   args: ["0x3BaeB6C865135c1d613c659f84f8b4345487141D"],
+  // });
+
+  // console.log(nfts);
+
+  // const {
+  //   data: events,
+  //   isLoading: isLoadingEvents,
+  //   error: errorReadingEvents,
+  // } = useScaffoldEventHistory({
+  //   contractName: "NFTSales",
+  //   eventName: "nftSales",
+  //   fromBlock: 31231n,
+  //   watch: true,
+  //   filters: { premium: true },
+  //   blockData: true,
+  //   transactionData: true,
+  //   receiptData: true,
+  // });
+
+  // console.log(events, "events");
+
+  useEffect(() => {
+    const fetchSaleStatuses = async () => {
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor-rpc.publicnode.com");
+      const contractInstance = new ethers.Contract("0x9cA27Cf612a377236303FA0473E4E7C69d30fB8c", NFTSalesAbi, provider);
+
+      const statuses: Record<string, boolean> = {};
+      for (const address of tokenAddresses) {
+        const ad = "0x3BaeB6C865135c1d613c659f84f8b4345487141D";
+        console.log("chchchchchchchchchchchch: ")
+        const isOnSale = await contractInstance.nftSales(address);
+        if (isOnSale.nftAddress == 0x)
+
+        // console.log(isOnSale.toString());
+        statuses[address] = isOnSale;
+      }
+      // Use the functional update form of setSaleStatuses to ensure you're working with the most up-to-date state
+      setSaleStatuses(prevStatuses => ({
+        ...prevStatuses,
+        ...statuses,
+      }));
+    };
+
+    fetchSaleStatuses();
+  }, [tokenAddresses]);
+
+  // console.log(saleStatuses);
+
+  // useEffect(() => {
+  //   const fetchSaleStatuses = async () => {
+  //     const statuses: Record<string, boolean> = {};
+  //     for (const address of tokenAddresses) {
+  //       // eslint-disable-next-line react-hooks/rules-of-hooks
+  //       const { data: nftSale }: any = await useScaffoldContractRead({
+  //         contractName: "NFTSales",
+  //         functionName: "nftSales",
+  //         args: [address], // Correctly pass the address
+  //       });
+
+  //       console.log(nftSale);
+  //       statuses[address] = nftSale;
+  //     }
+  //     setSaleStatuses(statuses);
+  //   };
+
+  //   fetchSaleStatuses();
+  // }, [tokenAddresses]);
+
+  // useEffect(() => {
+  //   // Function to check if a token is on sale
+  //   const CheckSaleStatus = (tokenAddress: string) => {
+  //     const { data: nftSale }: any = useScaffoldContractRead({
+  //       contractName: "NFTSales",
+  //       functionName: "nftSales",
+  //       args: [tokenAddress[1]],
+  //     });
+  //     console.log(nftSale);
+  //     return nftSale;
+  //   };
+
+  //   // Iterate over token addresses and check sale status
+  //   const fetchSaleStatuses = async () => {
+  //     const statuses = {};
+  //     for (const address of tokenAddresses) {
+  //       console.log(address, "address////////");
+  //       const isOnSale = await CheckSaleStatus(address);
+  //       console.log(isOnSale);
+  //       statuses[address] = isOnSale;
+  //     }
+  //     setSaleStatuses(statuses);
+  //   };
+
+  //   fetchSaleStatuses();
+  // }, [tokenAddresses]);
+
+  // console.log(saleStatuses);
+
+  // const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
+  // console.log(tokenAddresses);
+
+  // const firstTokenAddress = tokenAddresses[0];
+
+  // const { data: nfts }: any = useScaffoldContractRead({
+  //   contractName: "NFTSales",
+  //   functionName: "nftSales",
+  //   args: [firstTokenAddress],
+  // });
+  // console.log(nfts);
+
+  // // Use useEffect to handle the side effect of fetching data for each token address
+
+  // console.log(nfts);
 
   //  console.log(nfts);
   //  console.log(txValue);
@@ -60,11 +177,21 @@ const Page = () => {
 
   if (!AllTokens) {
     return (
-      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center mt-24">
         <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
       </div>
     );
   }
+
+  if (!userTokens) {
+    return (
+      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center mt-24">
+        <h1>User has No token</h1>
+      </div>
+    );
+  }
+
+  // console.log(userTokens.length);
 
   return (
     <div className="container mx-auto px-12 mt-12">
@@ -73,7 +200,7 @@ const Page = () => {
           Create New Token
         </Link>
       </div>
-      <h1 className="text-center mb-3 font-bold text-2xl">Creators Token</h1>
+      <h1 className="text-center mb-3 font-bold text-2xl">Create New Token</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {userTokens.map(token => (
           <>
@@ -100,13 +227,15 @@ const Page = () => {
                   <Address address={token.tokenOwner} />
                 </div>
               </div>
-              <IntegerInput
-                value={txValue}
-                onChange={updatedTxValue => {
-                  setTxValue(updatedTxValue);
-                }}
-                placeholder="input token price"
-              />
+              {!saleStatuses[token.tokenAddress] && (
+                <IntegerInput
+                  value={txValue}
+                  onChange={updatedTxValue => {
+                    setTxValue(updatedTxValue);
+                  }}
+                  placeholder="input token price"
+                />
+              )}
               <button
                 onClick={() => {
                   const txValueBigInt = typeof txValue === "bigint" ? txValue : BigInt(txValue);
@@ -116,12 +245,12 @@ const Page = () => {
                 className="w-full text-center p-1 rounded-sm bg-primary mt-2"
                 disabled={isLoading || isMining}
               >
-                {isLoading ? (
+                {isLoading && saleStatuses[token.tokenAddress] ? (
                   <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
                     <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
                   </div>
                 ) : (
-                  "Create Sale"
+                  <div>{saleStatuses[token.tokenAddress] ? "on sale" : "Create Sales"}</div>
                 )}
               </button>
             </div>
