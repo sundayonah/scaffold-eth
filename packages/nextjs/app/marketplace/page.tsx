@@ -126,19 +126,19 @@ const Page = () => {
                 width={100}
                 height={50}
               />
-              <div className="absolute bottom-32 left-2 text-gray-200 bg-white bg-opacity-50 p-2 rounded-bl-md shadow-xl">
+              {/* <div className="absolute bottom-32 left-2 text-gray-200 bg-white bg-opacity-50 p-2 rounded-bl-md shadow-xl">
                 <span className="text-gray-500">#{index + 1}</span>
-              </div>
+              </div> */}
               <div className="p-2">
                 <h2 className="text-start text-lg font-bold mt-1">{token.tokenName}</h2>
-                <p className="text-start text-gray-600">Total Supply: {token.totalSupply.toString()}</p>
+                <p className="text-start text-gray-600 font-bold">Total Supply: {token.totalSupply.toString()}</p>
 
                 <div className="flex gap-3">
-                  <p className="text-sm">Owner: </p>
+                  <p className="text-sm font-bold">Owner: </p>
                   <Address address={token.tokenOwner} />
                 </div>
                 <div className="flex gap-3">
-                  <p className="text-sm">Asset: </p>
+                  <p className="text-sm font-bold">Asset: </p>
                   <Address address={token.tokenAddress} />
                 </div>
               </div>

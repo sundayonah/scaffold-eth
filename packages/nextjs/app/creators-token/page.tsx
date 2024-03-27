@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import CreatorsNFTs from "../CreatorsNFTs/page";
 import CreatorsAbi from "./creatorsToken.json";
 import FactoryAbi from "./factory.json";
@@ -28,13 +29,29 @@ const Page = () => {
   const pinataUrl = "https://api.pinata.cloud/pinning/pinFileToIPFS";
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const factoryContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+  const router = useRouter();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [fileImg, setFileImg] = useState(null as File | null);
   const [ipfsImageHash, setIpfsImageHash] = useState("");
+  const [tokens, setTokens] = useState<string[]>([]);
 
   // const [previewUrl, setPreviewUrl] = useState(null);
+
+  useScaffoldEventSubscriber({
+    contractName: "CreatorsFactory",
+    eventName: "TokenDeployed",
+    listener: logs => {
+      logs.map(log => {
+        const { tokenAddress } = log.args;
+        console.log(tokenAddress, "tokenAddress");
+        if (tokenAddress) {
+          setTokens(prevTokens => [...prevTokens, tokenAddress]);
+        }
+      });
+    },
+  });
 
   const [formData, setFormData] = useState({
     tokenName: "",
@@ -126,6 +143,9 @@ const Page = () => {
 
       //reset the file input stat
       setFileImg(null);
+
+      // navigate to the creatorsNFTs page
+      router.push("/");
     } catch (error: any) {
       console.error("Error pinning file to IPFS:", error);
     }
@@ -133,7 +153,15 @@ const Page = () => {
 
   return (
     <div className=" flex items-center flex-col flex-grow pt-10 mt-10">
-      <h1>Creators Token</h1>
+      <h1>Create Token</h1>
+      <ul>
+        {tokens.map((tokenAddress, index) => (
+          <>
+            hello
+            <li key={index}>{tokenAddress}</li>
+          </>
+        ))}
+      </ul>
 
       <div className="container max-w-[40%]  mx-auto rounded-md shadow-md hover:shadow-lg p-4 space-y-3">
         <form onSubmit={handleSubmit}>
@@ -159,20 +187,6 @@ const Page = () => {
             <label className="text-sm">Asset Image</label>
             <input type="file" onChange={handleImagePinToIPFS} />
           </div>
-          {/* <div
-            className="flex items-center justify-center p-4 mt-2 bg-[#e9fbff] rounded-lg cursor-pointer hover:bg-gray-200"
-            onClick={handleDivClick}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
-              <path
-                fillRule="evenodd"
-                d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="text-sm">Upload Image</span>
-            <input type="file" ref={fileInputRef} className="hidden" onChange={handleImagePinToIPFS} />
-          </div> */}
           <button
             type="submit"
             className="w-full text-center p-1 rounded-sm bg-primary mt-2"

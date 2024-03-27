@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import CreatorsTokenAbi from "./creatorsToken.json";
 import { ethers } from "ethers";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import {
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventHistory,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
 
 // Adjust the import path as necessary
 interface TokenDetail {
@@ -18,13 +23,25 @@ export const useFetchTokenDetails = (AllTokens: any) => {
   const [tokenMetaData, setTokenMetaData] = useState<TokenDetail[]>([]);
 
   //////////////////////////////////////////
-  const { data: getAllTokens }: any = useScaffoldContractRead({
-    contractName: "CreatorsFactory",
-    functionName: "getAllTokens",
-    // args: [BigInt(0)]
-  });
+  // const { data: getAllTokens }: any = useScaffoldContractRead({
+  //   contractName: "CreatorsFactory",
+  //   functionName: "getAllTokens",
+  //   // args: [BigInt(0)]
+  // });
 
-  // console.log(`Total counter: ${getAllTokens}`);
+  // useScaffoldEventSubscriber({
+  //   contractName: "CreatorsFactory",
+  //   eventName: "TokenDeployed",
+  //   // The listener function is called whenever a GreetingChange event is emitted by the contract.
+  //   // Parameters emitted by the event can be destructed using the below example
+  //   // for this example: event GreetingChange(address greetingSetter, string newGreeting, bool premium, uint256 value);
+  //   listener: logs => {
+  //     logs.map(log => {
+  //       // const {  } = log.args;
+  //       console.log("📡 GreetingChange event", log.args);
+  //     });
+  //   },
+  // });
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -43,7 +60,7 @@ export const useFetchTokenDetails = (AllTokens: any) => {
       });
 
       const allTokenDetails = await Promise.all(tokenPromises);
-      console.log(allTokenDetails, "allTokenDetails");
+      // console.log(allTokenDetails, "allTokenDetails");
       setTokenMetaData(allTokenDetails);
     };
 

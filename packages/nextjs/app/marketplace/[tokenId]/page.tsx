@@ -7,7 +7,7 @@ import { useFetchTokenDetails } from "../NFTToken";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { Address, Balance } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   const { address: connectedAddress } = useAccount();

@@ -7,16 +7,32 @@ import img1 from "../images/img1.webp";
 import { useFetchTokenDetails } from "../marketplace/NFTToken";
 import NFTSalesAbi from "./creatorsNFTs.json";
 import { ethers } from "ethers";
+import { stat } from "fs";
 import { useAccount } from "wagmi";
 // import { useFetchTokenDetails } from "./NFTToken";
 import { Address } from "~~/components/scaffold-eth";
 import { IntegerInput } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import {
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventHistory,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
 
 const Page = () => {
   const { address } = useAccount();
   const [txValue, setTxValue] = useState<string | bigint>("");
   const [loadingStatuses, setLoadingStatuses] = useState<Record<string, boolean>>({});
+  const [inputValues, setInputValues] = useState<Record<string, string | bigint>>({});
+
+  // Handler for input value changes
+  const handleInputChange = (tokenAddress: string, updatedValue: string | bigint) => {
+    setInputValues(prevValues => ({
+      ...prevValues,
+      [tokenAddress]: updatedValue,
+    }));
+    console.log(tokenAddress, ethers.parseEther(updatedValue.toString()), "tokenAddress, updatedValue");
+  };
 
   // const statuses: Record<string, boolean> = {};
   const [saleStatuses, setSaleStatuses] = useState<Record<string, boolean>>({});
@@ -28,7 +44,7 @@ const Page = () => {
   });
 
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
-  console.log(arrayOfTokens, "arrayOfTokens");
+  // console.log(arrayOfTokens, "arrayOfTokens");
 
   const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
 
@@ -60,76 +76,6 @@ const Page = () => {
     fetchSaleStatuses();
   }, [tokenAddresses]);
 
-  // console.log(saleStatuses);
-
-  // useEffect(() => {
-  //   const fetchSaleStatuses = async () => {
-  //     const statuses: Record<string, boolean> = {};
-  //     for (const address of tokenAddresses) {
-  //       // eslint-disable-next-line react-hooks/rules-of-hooks
-  //       const { data: nftSale }: any = await useScaffoldContractRead({
-  //         contractName: "NFTSales",
-  //         functionName: "nftSales",
-  //         args: [address], // Correctly pass the address
-  //       });
-
-  //       console.log(nftSale);
-  //       statuses[address] = nftSale;
-  //     }
-  //     setSaleStatuses(statuses);
-  //   };
-
-  //   fetchSaleStatuses();
-  // }, [tokenAddresses]);
-
-  // useEffect(() => {
-  //   // Function to check if a token is on sale
-  //   const CheckSaleStatus = (tokenAddress: string) => {
-  //     const { data: nftSale }: any = useScaffoldContractRead({
-  //       contractName: "NFTSales",
-  //       functionName: "nftSales",
-  //       args: [tokenAddress[1]],
-  //     });
-  //     console.log(nftSale);
-  //     return nftSale;
-  //   };
-
-  //   // Iterate over token addresses and check sale status
-  //   const fetchSaleStatuses = async () => {
-  //     const statuses = {};
-  //     for (const address of tokenAddresses) {
-  //       console.log(address, "address////////");
-  //       const isOnSale = await CheckSaleStatus(address);
-  //       console.log(isOnSale);
-  //       statuses[address] = isOnSale;
-  //     }
-  //     setSaleStatuses(statuses);
-  //   };
-
-  //   fetchSaleStatuses();
-  // }, [tokenAddresses]);
-
-  // console.log(saleStatuses);
-
-  // const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
-  // console.log(tokenAddresses);
-
-  // const firstTokenAddress = tokenAddresses[0];
-
-  // const { data: nfts }: any = useScaffoldContractRead({
-  //   contractName: "NFTSales",
-  //   functionName: "nftSales",
-  //   args: [firstTokenAddress],
-  // });
-  // console.log(nfts);
-
-  // // Use useEffect to handle the side effect of fetching data for each token address
-
-  // console.log(nfts);
-
-  //  console.log(nfts);
-  //  console.log(txValue);
-
   // Filter tokens to display only those owned by the connected address
   const userTokens = arrayOfTokens.filter(token => token.tokenOwner === address);
 
@@ -148,6 +94,20 @@ const Page = () => {
     },
   });
 
+  useScaffoldEventSubscriber({
+    contractName: "NFTSales",
+    eventName: "CreateSaleEvent",
+    // The listener function is called whenever a GreetingChange event is emitted by the contract.
+    // Parameters emitted by the event can be destructed using the below example
+    // for this example: event GreetingChange(address greetingSetter, string newGreeting, bool premium, uint256 value);
+    listener: logs => {
+      logs.map(log => {
+        // const {  } = log.args;
+        console.log("📡 GreetingChange event", log.args);
+      });
+    },
+  });
+
   if (!AllTokens) {
     return (
       <div className="max-w-5xl mx-auto my-auto flex justify-center items-center mt-24">
@@ -156,15 +116,18 @@ const Page = () => {
     );
   }
 
-  if (!userTokens) {
+  if (userTokens.length == 0) {
     return (
-      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center mt-24">
-        <h1>User has No token</h1>
+      <div className="max-w-5xl mx-auto my-auto flex flex-col justify-center items-center mt-24">
+        <h1 className="text-center mb-3 font-bold text-2xl">This User has No token</h1>
+        <div className="flex justify-end mb-6">
+          <Link href="/creators-token" passHref className=" text-center p-1.5 rounded-md bg-primary mt-2">
+            Create Token
+          </Link>
+        </div>
       </div>
     );
   }
-
-  // console.log(userTokens.length);
 
   return (
     <div className="container mx-auto px-12 mt-12">
@@ -173,7 +136,8 @@ const Page = () => {
           Create New Token
         </Link>
       </div>
-      <h1 className="text-center mb-3 font-bold text-2xl">Create New Token</h1>
+      {/* <h1 className="text-center mb-3 font-bold text-2xl">Creators Token</h1> */}
+      <h1 className="text-center mb-3 font-bold text-2xl">Creators Token</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {userTokens.map(token => (
           <>
@@ -193,26 +157,26 @@ const Page = () => {
               </div>
               <div className="p-2">
                 <h2 className="text-start text-lg font-bold mt-1">{token.tokenName}</h2>
-                <p className="text-start text-gray-600">Total Supply: {token.totalSupply}</p>
+                <p className="text-start text-gray-600">Total Supply: {token.totalSupply.toString()}</p>
 
-                <div className="flex gap-3">
-                  <p className="text-sm">Owner: </p>
+                <div className={`flex gap-3 ${saleStatuses[token.tokenAddress] ? "mb-10" : ""}`}>
+                  <p className="text-sm">Asset: </p>
                   <Address address={token.tokenAddress} />
                 </div>
               </div>
               {!saleStatuses[token.tokenAddress] && (
                 <IntegerInput
-                  value={txValue}
-                  onChange={updatedTxValue => {
-                    setTxValue(updatedTxValue); //ethers.formatEther(updatedTxValue.toString()));
-                  }}
+                  value={inputValues[token.tokenAddress] || ""}
+                  onChange={updatedValue => handleInputChange(token.tokenAddress, updatedValue)}
                   placeholder="input token price"
                 />
               )}
               <button
                 onClick={() => {
-                  const txValueBigInt = typeof txValue === "bigint" ? txValue : BigInt(txValue);
-                  writeAsync({ args: [token.tokenAddress, txValueBigInt] });
+                  const txValueBigInt = inputValues[token.tokenAddress];
+
+                  // BigInt(inputValues[token.tokenAddress]);
+                  writeAsync({ args: [token.tokenAddress, ethers.parseEther(txValueBigInt.toString())] });
                 }}
                 type="submit"
                 className="w-full text-center p-1 rounded-sm bg-primary mt-2"
