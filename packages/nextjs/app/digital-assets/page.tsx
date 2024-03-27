@@ -66,7 +66,7 @@ const Page = () => {
 
   // console.log(tokenDetails);
 
-  if (!tokenDetails) {
+  if (tokenDetails?.length == 0) {
     return (
       <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
         <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
