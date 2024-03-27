@@ -22,19 +22,23 @@ const Page = () => {
     // args: [BigInt(0)]
   });
 
-  const { data: nfts }: any = useScaffoldContractRead({
-    contractName: "NFTSales",
-    functionName: "nftSales",
-    args: ["0x3BaeB6C865135c1d613c659f84f8b4345487141D"],
-  });
-
-  console.log(nfts);
   //   console.log(object);
 
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
-  // console.log(address);
+  //   console.log(arrayOfTokens);
 
-  //   console.log(txValue);
+  const tokenAddresses: string[] = arrayOfTokens.map(nft => nft.tokenAddress);
+  console.log(tokenAddresses);
+
+  const { data: nfts }: any = useScaffoldContractRead({
+    contractName: "NFTSales",
+    functionName: "nftSales",
+    args: [""],
+  });
+  console.log(nfts);
+
+  //  console.log(nfts);
+  //  console.log(txValue);
 
   // Filter tokens to display only those owned by the connected address
   const userTokens = arrayOfTokens.filter(token => token.tokenOwner === address);
