@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useFetchTokenDetails } from "./NFTToken";
@@ -8,6 +8,7 @@ import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
 const Page = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const { data: AllTokens }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
     functionName: "getAllTokens",
@@ -15,6 +16,15 @@ const Page = () => {
   });
 
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
+
+  // State for search term
+
+  // Filter tokens based on search term
+  const filteredTokens = arrayOfTokens.filter(
+    token =>
+      token.tokenName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      token.tokenAddress.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   if (!AllTokens) {
     return (
@@ -26,11 +36,22 @@ const Page = () => {
 
   return (
     <div className="container mx-auto px-12 mt-24">
+      <div className="max-w-2xl mx-auto ">
+        <input
+          type="text"
+          placeholder="Search by asset name or address"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          className="w-full p-2 mb-4 shadow-xl rounded outline-none"
+        />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-        {arrayOfTokens.map((token, index) => (
+        {filteredTokens.length === 0 && (
+          <div className="text-center text-gray-600 font-extrabold text-2xl">No results found for {searchTerm} :)</div>
+        )}
+        {filteredTokens.map((token, index) => (
           <div
             key={token.tokenName}
-            // className="bg-[#e9fbff] shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
             className="bg-primary shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
           >
             <Link href={`/marketplace/${token.tokenURL}`} passHref>
