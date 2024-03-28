@@ -146,7 +146,7 @@ const Page = () => {
 
       <div className="container max-w-[40%]  mx-auto rounded-md shadow-md hover:shadow-lg p-4 space-y-3">
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className="mb-2">
             <label className="text-sm">Asset Name</label>
             <InputBase
               name="tokenName"
@@ -155,7 +155,7 @@ const Page = () => {
               onChange={name => setFormData(prevState => ({ ...prevState, tokenName: name }))}
             />
           </div>
-          <div>
+          <div className="mb-2">
             <label className="text-sm">Asset Symbol</label>
             <InputBase
               name="tokenSymbol"

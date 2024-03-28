@@ -1,8 +1,6 @@
 #  User Flow: Token Creation and NFT Sales
 
-<h4 align="center">
-  <a href="">User Flow: Token Creation and NFT Sales</a> |
-</h4>
+
 
 
 ## Token Creation
@@ -19,4 +17,4 @@ Upon submission, the NFTSales contract verifies the validity of the NFT contract
 
 Bob, an art enthusiast, learns about Alice's NFT sale and decides to purchase one of her artworks. He visits the NFTSales contract to explore the available NFTs and their prices. After selecting an NFT he wishes to purchase, Bob submits a transaction to buy the NFT. Bob includes the necessary Ether (ETH) as payment for the NFT, ensuring he covers the price set by Alice. The NFTSales contract receives Bob's transaction and verifies that he has sent the correct amount of Ether. Upon successful verification, the NFTSales contract triggers the transfer of the purchased NFT from Alice's ownership to Bob's ownership. An event is emitted, confirming the successful purchase of the NFT by Bob and capturing relevant transaction details. Bob now owns the NFT, allowing him to showcase and enjoy Alice's artwork in his digital collection.
 
-![Marketplace](/packages/nextjs/public/marketplace.png)
+<!-- ![Marketplace](/packages/nextjs/public/marketplace.png) -->

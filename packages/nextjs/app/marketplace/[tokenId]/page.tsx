@@ -59,47 +59,95 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   return (
     <div className="container mx-auto px-12 mt-16">
       <h2 className="font-bold text-2xl">{tokenDetails.tokenName}</h2>
-      <div>
-        <Image
-          className="w-full h-80 object-cover object-center rounded-md mx-auto"
-          src={`https://ipfs.io/ipfs/${tokenDetails.tokenURL}`}
-          alt={tokenDetails.tokenName}
-          width={100}
-          height={50}
-        />
-
-        <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply.toString()}</p>
-        <div className="flex items-center text-sm font-semibold gap-5">
-          Owner: <Address address={tokenDetails.tokenOwner} />
+      <div className="flex flex-col md:flex-row gap-3 justify-center items-end">
+        <div className="w-full md:w-1/2">
+          <Image
+            className="w-full h-80 object-cover object-center rounded-md mx-auto"
+            src={`https://ipfs.io/ipfs/${tokenDetails.tokenURL}`}
+            alt={tokenDetails.tokenName}
+            width={100}
+            height={50}
+          />
         </div>
-        <div className="flex items-center text-sm font-semibold gap-5">
-          Asset: <Address address={tokenDetails.tokenAddress} />
+        <div className="w-full md:w-1/2">
+          <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply.toString()}</p>
+          <div className="flex items-center text-sm font-semibold gap-4 mb-1">
+            Owner: <Address address={tokenDetails.tokenOwner} />
+          </div>
+          <div className="flex items-center text-sm font-semibold gap-6">
+            Asset: <Address address={tokenDetails.tokenAddress} />
+          </div>
+          <div className="flex items-center text-sm font-semibold">
+            Balance: <Balance address={connectedAddress} />
+          </div>
+          <button
+            onClick={() => {
+              console.log("Yoou have clicked me", tokenDetails.tokenName);
+              handleBuyNFT();
+            }}
+            type="submit"
+            className="w-full text-center p-1 rounded-sm bg-primary mt-2"
+            disabled={isLoading || isMining}
+          >
+            {isLoading ? (
+              <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+                <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
+              </div>
+            ) : (
+              "Buy NFT"
+            )}
+          </button>
+          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
         </div>
-        <div className="flex items-center text-sm font-semibold">
-          Balance: <Balance address={connectedAddress} />
-        </div>
-
-        <button
-          onClick={() => {
-            console.log("Yoou have clicked me", tokenDetails.tokenName);
-            handleBuyNFT();
-          }}
-          type="submit"
-          className="w-full text-center p-1 rounded-sm bg-primary mt-2"
-          disabled={isLoading || isMining}
-        >
-          {isLoading ? (
-            <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
-              <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
-            </div>
-          ) : (
-            "Buy NFT"
-          )}
-        </button>
-        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
       </div>
     </div>
   );
+
+  // return (
+  //   <div className="container mx-auto px-12 mt-16">
+  //     <h2 className="font-bold text-2xl">{tokenDetails.tokenName}</h2>
+  //     <div>
+  //       <Image
+  //         className="w-full h-80 object-cover object-center rounded-md mx-auto"
+  //         src={`https://ipfs.io/ipfs/${tokenDetails.tokenURL}`}
+  //         alt={tokenDetails.tokenName}
+  //         width={100}
+  //         height={50}
+  //       />
+  //       <div>
+  //         <p className="text-sm font-semibold gap-5">Total Supply: {tokenDetails.totalSupply.toString()}</p>
+  //         <div className="flex items-center text-sm font-semibold gap-5">
+  //           Owner: <Address address={tokenDetails.tokenOwner} />
+  //         </div>
+  //         <div className="flex items-center text-sm font-semibold gap-5">
+  //           Asset: <Address address={tokenDetails.tokenAddress} />
+  //         </div>
+  //         <div className="flex items-center text-sm font-semibold">
+  //           Balance: <Balance address={connectedAddress} />
+  //         </div>
+
+  //         <button
+  //           onClick={() => {
+  //             console.log("Yoou have clicked me", tokenDetails.tokenName);
+  //             handleBuyNFT();
+  //           }}
+  //           type="submit"
+  //           className="w-full text-center p-1 rounded-sm bg-primary mt-2"
+  //           disabled={isLoading || isMining}
+  //         >
+  //           {isLoading ? (
+  //             <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+  //               <div className="animate-spin h-6 w-6 border-t-2 border-b-2 border-black rounded-full"></div>
+  //             </div>
+  //           ) : (
+  //             "Buy NFT"
+  //           )}
+  //         </button>
+  //         {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default NFTPage;
