@@ -2,7 +2,6 @@
 
 
 
-
 ## Token Creation
 
 Alice, an aspiring artist, decides to tokenize her artwork and offer it as an NFT (Non-Fungible Token) for sale. She navigates to the CreatorsFactory contract, where tokens are created and deployed. Alice fills in the required details: Name of the token (e.g., "ArtToken"), Symbol for the token (e.g., "ART"), Initial token URI (Uniform Resource Identifier) containing metadata or information about the artwork.

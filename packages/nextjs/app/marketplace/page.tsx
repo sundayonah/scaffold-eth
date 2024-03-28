@@ -47,11 +47,11 @@ const Page = () => {
                 <p className="text-start text-gray-600 font-bold">Total Supply: {token.totalSupply.toString()}</p>
 
                 <div className="flex gap-3">
-                  <p className="text-sm font-bold  text-gray-600 ">Owner: </p>
+                  <p className="text-sm font-bold  text-gray-600 mr-0.5">Owner: </p>
                   <Address address={token.tokenOwner} />
                 </div>
                 <div className="flex gap-3">
-                  <p className="text-sm font-bold  text-gray-600 ">Asset: </p>
+                  <p className="text-sm font-bold  text-gray-600 mr-2">Asset: </p>
                   <Address address={token.tokenAddress} />
                 </div>
               </div>
