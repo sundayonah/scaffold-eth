@@ -23,7 +23,8 @@ const Page = () => {
   const filteredTokens = arrayOfTokens.filter(
     token =>
       token.tokenName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      token.tokenAddress.toLowerCase().includes(searchTerm.toLowerCase()),
+      token.tokenAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      token.tokenOwner.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (!AllTokens) {
@@ -39,7 +40,7 @@ const Page = () => {
       <div className="max-w-2xl mx-auto ">
         <input
           type="text"
-          placeholder="Search by asset name or address"
+          placeholder="Search by asset name / address / owner..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           className="w-full p-2 mb-4 shadow-xl bg-transparent rounded outline-none"
