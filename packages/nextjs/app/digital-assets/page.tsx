@@ -23,7 +23,7 @@ const Page = () => {
     eventName: "BuyNFTEvent",
     fromBlock: 31231n,
     watch: true,
-    filters: { premium: true },
+    // filters: { premium: true },
     blockData: true,
     transactionData: true,
     receiptData: true,

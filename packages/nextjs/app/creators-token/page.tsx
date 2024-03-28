@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import CreatorsNFTs from "../CreatorsNFTs/page";
 import pinataSDK from "@pinata/sdk";
 import axios from "axios";
-import { ethers } from "ethers";
-import { parseEther } from "ethers/lib/utils";
-import { useWalletClient } from "wagmi";
 import { InputBase } from "~~/components/scaffold-eth";
 import {
   useDeployedContractInfo,
@@ -16,7 +13,6 @@ import {
   useScaffoldEventHistory,
   useScaffoldEventSubscriber,
 } from "~~/hooks/scaffold-eth";
-import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
 const Page = () => {
   //   const process.env.NEXT_PUBLIC_PINATA_API_KEY = "cdc215686c5dacab48be";
