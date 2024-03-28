@@ -33,6 +33,7 @@
     "react-hot-toast": "~2.4.0",
     "use-debounce": "~8.0.4",
     "usehooks-ts": "2.13.0",
+    "vercel": "^33.6.1",
     "viem": "1.19.9",
     "wagmi": "1.4.12",
     "zustand": "~4.1.2"

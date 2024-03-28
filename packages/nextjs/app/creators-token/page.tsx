@@ -3,8 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import CreatorsNFTs from "../CreatorsNFTs/page";
-import CreatorsAbi from "./creatorsToken.json";
-import FactoryAbi from "./factory.json";
 import pinataSDK from "@pinata/sdk";
 import axios from "axios";
 import { ethers } from "ethers";
@@ -20,15 +18,12 @@ import {
 } from "~~/hooks/scaffold-eth";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
-// import { EtherInput } from "~~/components/scaffold-eth";
-// import { AddressInput } from "~~/components/scaffold-eth";
-
 const Page = () => {
-  const pinataApiKey = "cdc215686c5dacab48be";
-  const pinataSecretApiKey = "54622cbeb84d4a1d9052aee5e49e2d3d9b6589470d0c26b6050e1af1cc138d10";
+  //   const process.env.NEXT_PUBLIC_PINATA_API_KEY = "cdc215686c5dacab48be";
+  //   const pinataSecretApiKey = "54622cbeb84d4a1d9052aee5e49e2d3d9b6589470d0c26b6050e1af1cc138d10";
+  //   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  //   const factoryContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   const pinataUrl = "https://api.pinata.cloud/pinning/pinFileToIPFS";
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const factoryContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   const router = useRouter();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -36,8 +31,6 @@ const Page = () => {
   const [fileImg, setFileImg] = useState(null as File | null);
   const [ipfsImageHash, setIpfsImageHash] = useState("");
   const [tokens, setTokens] = useState<string[]>([]);
-
-  // const [previewUrl, setPreviewUrl] = useState(null);
 
   useScaffoldEventSubscriber({
     contractName: "CreatorsFactory",
@@ -69,17 +62,15 @@ const Page = () => {
     contractName: "CreatorsFactory",
     functionName: "deployToken",
     args: [formData.tokenName, formData.tokenSymbol, ipfsImageHash],
-    // value: ethers.utils.parseEther("0.1").toBigInt(),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
+      // console.log("Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
   const { data: tokenCount }: any = useScaffoldContractRead({
     contractName: "CreatorsFactory",
     functionName: "tokenCount",
-    // args: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
   });
 
   const { data: AllTokens }: any = useScaffoldContractRead({
@@ -87,8 +78,6 @@ const Page = () => {
     functionName: "getAllTokens",
     // args: [BigInt(0)]
   });
-
-  // console.log(`Total counter: ${AllTokens}`);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -105,10 +94,9 @@ const Page = () => {
       const pinataResponse = await axios.post(pinataUrl, imageForm, {
         maxContentLength: Infinity,
         headers: {
-          // Authorization: `Bearer ${PINATA_JWT}`,
           "Content-Type": "multipart/form-data",
-          pinata_api_key: pinataApiKey,
-          pinata_secret_api_key: pinataSecretApiKey,
+          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET_KEY,
         },
       });
 
@@ -128,11 +116,8 @@ const Page = () => {
       console.log(formAssets, "form Assets");
 
       // Trigger the transaction using the writeAsync function
-      // await writeAsync();
       await writeAsync({
         args: [formData.tokenName, formData.tokenSymbol, imageHash],
-        // gasLimit: 600000, // Example gas limit
-        // gasPrice: ethers.utils.parseUnits("10.0", "gwei").toBigInt(), // Example gas price
       });
 
       // After successful submission, reset the form fields

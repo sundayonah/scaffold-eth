@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-// import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFetchTokenDetails } from "../NFTToken";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { Address, Balance } from "~~/components/scaffold-eth";
-import { useScaffoldContractRead, useScaffoldContractWrite, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   const { address: connectedAddress } = useAccount();
@@ -22,7 +21,6 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
 
   const tokenDetails = arrayOfTokens.find(token => token.tokenURL.toString() === params.tokenId);
-  // console.log(tokenDetails, "arrayOfTokens");
 
   const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
     contractName: "NFTSales",
@@ -31,7 +29,7 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
     value: ethers.parseEther("0.0001"),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
-      console.log("Transaction blockHash", txnReceipt.blockHash);
+      // console.log("Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
@@ -84,7 +82,6 @@ const NFTPage = ({ params }: { params: { tokenId: string } }) => {
         <button
           onClick={() => {
             console.log("Yoou have clicked me", tokenDetails.tokenName);
-            // writeAsync();
             handleBuyNFT();
           }}
           type="submit"

@@ -21,8 +21,6 @@ import {
 
 const Page = () => {
   const { address } = useAccount();
-  const [txValue, setTxValue] = useState<string | bigint>("");
-  const [loadingStatuses, setLoadingStatuses] = useState<Record<string, boolean>>({});
   const [inputValues, setInputValues] = useState<Record<string, string | bigint>>({});
 
   // Handler for input value changes
@@ -34,7 +32,6 @@ const Page = () => {
     console.log(tokenAddress, ethers.parseEther(updatedValue.toString()), "tokenAddress, updatedValue");
   };
 
-  // const statuses: Record<string, boolean> = {};
   const [saleStatuses, setSaleStatuses] = useState<Record<string, boolean>>({});
 
   const { data: AllTokens }: any = useScaffoldContractRead({
@@ -44,7 +41,6 @@ const Page = () => {
   });
 
   const arrayOfTokens = useFetchTokenDetails(AllTokens);
-  // console.log(arrayOfTokens, "arrayOfTokens");
 
   const tokenAddresses = arrayOfTokens.map(nft => nft.tokenAddress);
 
@@ -62,9 +58,6 @@ const Page = () => {
         } else {
           statuses[address] = true;
         }
-
-        // console.log(isOnSale.toString());
-        // statuses[address] = isOnSale;
       }
       // Use the functional update form of setSaleStatuses to ensure you're working with the most up-to-date state
       setSaleStatuses(prevStatuses => ({
@@ -79,32 +72,13 @@ const Page = () => {
   // Filter tokens to display only those owned by the connected address
   const userTokens = arrayOfTokens.filter(token => token.tokenOwner === address);
 
-  //   const txValueBigInt = typeof txValue === "bigint" ? txValue : BigInt(txValue);
-
-  // console.log(userTokens);
   const { writeAsync, isLoading, isMining } = useScaffoldContractWrite({
     contractName: "NFTSales",
     functionName: "createSale",
-    // args: [userTokens?.tokenAddress, txValueBigInt],
     args: [undefined, undefined],
-    // value: ethers.parseEther("0.1"),
     blockConfirmations: 1,
     onBlockConfirmation: txnReceipt => {
       console.log("Transaction blockHash", txnReceipt.blockHash);
-    },
-  });
-
-  useScaffoldEventSubscriber({
-    contractName: "NFTSales",
-    eventName: "CreateSaleEvent",
-    // The listener function is called whenever a GreetingChange event is emitted by the contract.
-    // Parameters emitted by the event can be destructed using the below example
-    // for this example: event GreetingChange(address greetingSetter, string newGreeting, bool premium, uint256 value);
-    listener: logs => {
-      logs.map(log => {
-        // const {  } = log.args;
-        console.log("📡 GreetingChange event", log.args);
-      });
     },
   });
 
@@ -136,14 +110,13 @@ const Page = () => {
           Create New Token
         </Link>
       </div>
-      {/* <h1 className="text-center mb-3 font-bold text-2xl">Creators Token</h1> */}
       <h1 className="text-center mb-3 font-bold text-2xl">Creators Token</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {userTokens.map(token => (
           <>
             <div
               key={token.tokenName}
-              className="bg-[#e9fbff] shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
+              className="bg-primary shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
             >
               <Image
                 className="w-full h-32 object-cover object-center rounded-md mx-auto"
@@ -152,9 +125,7 @@ const Page = () => {
                 width={100}
                 height={50}
               />
-              <div className="absolute bottom-32 left-2 text-gray-200 bg-white bg-opacity-50 p-2 rounded-bl-md shadow-xl">
-                {/* <span className="text-gray-500">#{index + 1}</span> */}
-              </div>
+              <div className="absolute bottom-32 left-2 text-gray-200 bg-white bg-opacity-50 p-2 rounded-bl-md shadow-xl"></div>
               <div className="p-2">
                 <h2 className="text-start text-lg font-bold mt-1">{token.tokenName}</h2>
                 <p className="text-start text-gray-600">Total Supply: {token.totalSupply.toString()}</p>
@@ -175,7 +146,6 @@ const Page = () => {
                 onClick={() => {
                   const txValueBigInt = inputValues[token.tokenAddress];
 
-                  // BigInt(inputValues[token.tokenAddress]);
                   writeAsync({ args: [token.tokenAddress, ethers.parseEther(txValueBigInt.toString())] });
                 }}
                 type="submit"

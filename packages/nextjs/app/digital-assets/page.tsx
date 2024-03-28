@@ -14,8 +14,6 @@ const Page = () => {
   const { address } = useAccount();
   const [tokenMetaData, setTokenMetatoken] = useState<any[]>([]);
 
-  // console.log(address);
-
   const {
     data: events,
     isLoading: isLoadingEvents,
@@ -30,6 +28,7 @@ const Page = () => {
     transactionData: true,
     receiptData: true,
   });
+
   // create an array and filter events then check if connected address is buyer, push into the array and display
   const userEvents = events?.filter(event => event.args.buyer === address);
   // map the event to display just the token address
@@ -49,42 +48,35 @@ const Page = () => {
     const isOnSale = await saleContractInstance.nftSales(tokenAddress);
 
     const amount = isOnSale[1];
-    // console.log({ tokenName, tokenSymbol, tokenOwner, tokenURL, amount });
 
     return { tokenAddress, tokenName, tokenSymbol, tokenOwner, tokenURL, amount };
   });
 
   // Use Promise.all to wait for all promises to resolve
-  Promise.all(tokenDetails)
+  Promise.all(tokenDetails || [])
     .then(resolvedTokenDetails => {
       setTokenMetatoken(resolvedTokenDetails);
-      // console.log(resolvedTokenDetails);
     })
     .catch(error => {
       console.error("Error fetching token details:", error);
     });
 
-  // console.log(tokenDetails);
-
   if (tokenDetails?.length == 0) {
     return (
       <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
         <h1 className="text-center mb-3 font-bold text-2xl">This User has No Profile</h1>
-        {/* <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div> */}
       </div>
     );
   }
 
   return (
     <div className="container mx-auto px-12 mt-32">
-      {/* <h1 className="text-center mb-3 font-bold text-2xl">User Assets</h1> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {tokenMetaData.map((token, index) => (
           <div
             key={token.tokenName}
-            className="bg-[#e9fbff] shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
+            className="bg-primary shadow-md hover:shadow-lg rounded p-1 transition-all duration-500 transform hover:translate-y-[-5px]"
           >
-            {/* <Link href={`/marketplace/${token.tokenURL}`} passHref> */}
             <Image
               className="w-full h-32 object-cover object-center rounded-md mx-auto"
               src={`https://ipfs.io/ipfs/${token.tokenURL}`}
@@ -110,7 +102,6 @@ const Page = () => {
                 {ethers.formatEther(token.amount.toString())} ETH
               </div>
             </div>
-            {/* </Link> */}
           </div>
         ))}
       </div>

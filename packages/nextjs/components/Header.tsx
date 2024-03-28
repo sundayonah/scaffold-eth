@@ -26,7 +26,6 @@ export const menuLinks: HeaderMenuLink[] = [
   {
     label: "MarketPlace",
     href: "/marketplace",
-    // icon: <BugAntIcon className="h-4 w-4" />,
   },
 ];
 
