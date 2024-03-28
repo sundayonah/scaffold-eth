@@ -40,7 +40,7 @@ const Page = () => {
       <div className="max-w-2xl mx-auto ">
         <input
           type="text"
-          placeholder="Search by asset name / address / owner..."
+          placeholder="Search by token name / asset / owner..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           className="w-full p-2 mb-4 shadow-xl bg-transparent rounded outline-none"

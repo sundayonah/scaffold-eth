@@ -99,7 +99,7 @@ const Page = () => {
               </div>
               <div className="flex items-center gap-3">
                 <p className="text-sm font-bold">Amount: </p>
-                {ethers.formatEther(token.amount.toString())} ETH
+                {ethers.formatEther(token.amount.toString())} MATIC
               </div>
             </div>
           </div>

@@ -16,16 +16,21 @@ type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: "Creators Token",
+    label: "MarketPlace",
     href: "/",
   },
   {
+    label: "Creators Token",
+    href: "/CreatorsNFTs",
+  },
+  // {
+
+  //   label: "Creators Token",
+  //   href: "/creators-token",
+  // },
+  {
     label: "My Profile",
     href: "/digital-assets",
-  },
-  {
-    label: "MarketPlace",
-    href: "/marketplace",
   },
 ];
 
