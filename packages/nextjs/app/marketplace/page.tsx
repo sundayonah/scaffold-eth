@@ -42,13 +42,15 @@ const Page = () => {
           placeholder="Search by asset name or address"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full p-2 mb-4 shadow-xl rounded outline-none"
+          className="w-full p-2 mb-4 shadow-xl bg-transparent rounded outline-none"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
         {filteredTokens.length === 0 && (
           <div className="text-center text-gray-600 font-extrabold text-2xl">No results found for {searchTerm} :)</div>
         )}
+        {/* <span className="loading loading-spinner p-5 text-blue-500"></span> */}
+
         {filteredTokens.map((token, index) => (
           <div
             key={token.tokenName}
