@@ -29,7 +29,7 @@ const Page = () => {
 
   if (!AllTokens) {
     return (
-      <div className="max-w-5xl mx-auto my-auto flex justify-center items-center">
+      <div className="max-w-5xl mx-auto flex justify-center items-center mt-72">
         <div className="animate-spin h-24 w-24 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
       </div>
     );
@@ -62,7 +62,7 @@ const Page = () => {
                 className="w-full h-32 object-cover object-center rounded-md mx-auto"
                 src={`https://ipfs.io/ipfs/${token.tokenURL}`}
                 alt={token.tokenName}
-                width={100}
+                width={200}
                 height={50}
               />
 
@@ -79,7 +79,7 @@ const Page = () => {
                   <Address address={token.tokenAddress} />
                 </div>
               </div>
-            </Link>{" "}
+            </Link>
           </div>
         ))}
       </div>

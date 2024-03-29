@@ -30,7 +30,6 @@ const Page = () => {
     listener: logs => {
       logs.map(log => {
         const { tokenAddress } = log.args;
-        console.log(tokenAddress, "tokenAddress");
         if (tokenAddress) {
           setTokens(prevTokens => [...prevTokens, tokenAddress]);
         }
