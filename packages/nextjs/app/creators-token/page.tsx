@@ -15,10 +15,6 @@ import {
 } from "~~/hooks/scaffold-eth";
 
 const Page = () => {
-  //   const process.env.NEXT_PUBLIC_PINATA_API_KEY = "cdc215686c5dacab48be";
-  //   const pinataSecretApiKey = "54622cbeb84d4a1d9052aee5e49e2d3d9b6589470d0c26b6050e1af1cc138d10";
-  //   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  //   const factoryContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   const pinataUrl = "https://api.pinata.cloud/pinning/pinFileToIPFS";
   const router = useRouter();
 
@@ -34,7 +30,6 @@ const Page = () => {
     listener: logs => {
       logs.map(log => {
         const { tokenAddress } = log.args;
-        console.log(tokenAddress, "tokenAddress");
         if (tokenAddress) {
           setTokens(prevTokens => [...prevTokens, tokenAddress]);
         }
