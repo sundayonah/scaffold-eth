@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createWalletClient, http, parseEther } from "viem";
-import { hardhat } from "viem/chains";
+import { hardhat, polygonMumbai } from "viem/chains";
 import { useAccount, useNetwork } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { useAccountBalance, useTransactor } from "~~/hooks/scaffold-eth";
@@ -12,7 +12,7 @@ const NUM_OF_ETH = "1";
 const FAUCET_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 
 const localWalletClient = createWalletClient({
-  chain: hardhat,
+  chain: polygonMumbai,
   transport: http(),
 });
 
@@ -33,7 +33,7 @@ export const FaucetButton = () => {
     try {
       setLoading(true);
       await faucetTxn({
-        chain: hardhat,
+        chain: polygonMumbai,
         account: FAUCET_ADDRESS,
         to: address,
         value: parseEther(NUM_OF_ETH),

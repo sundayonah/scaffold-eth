@@ -36,7 +36,7 @@ const Page = () => {
   }
 
   return (
-    <div className="container mx-auto px-12 mt-24">
+    <div className="container mx-auto px-12 mt-24 mb-5">
       <div className="max-w-2xl mx-auto ">
         <input
           type="text"
